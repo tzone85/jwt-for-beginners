@@ -10,6 +10,16 @@ var ExtractJwt = passportJWT.ExtractJwt;
 var JwtStrategy = passportJWT.Strategy;
 
 var app = express();
+app.use(passport.initialize());
+
+// parse application/x-www-form-url-urlencoded
+// for easier testing with Postman or plain HTML forms
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+// parse application/json
+app.use(bodyParser.json());
 
 var users = [
     {
