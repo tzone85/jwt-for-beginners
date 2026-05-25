@@ -1,0 +1,48 @@
+@startuml component
+title jwt-for-beginners — Component Architecture
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor Client
+
+package "src/" {
+  [server.js\n(entrypoint)] as server
+  [createApp\n(composition root)] as app
+  package "routes" {
+    [auth router\n/register, /login]
+    [me router\n/me]
+  }
+  package "middleware" {
+    [requireAuth\n(Bearer + verify + lookup)] as auth
+  }
+  package "services" {
+    [UserStore\n(in-memory, bcrypt-hashed)] as store
+    [JwtService\n(sign + verify)] as jwts
+    [loadConfig\n(zod-validated env)] as cfg
+  }
+}
+
+Client --> app : HTTP
+app --> auth : depends (for /me)
+[auth router\n/register, /login] --> store : add / verifyPassword
+[auth router\n/register, /login] --> jwts : sign
+auth --> jwts : verify
+auth --> store : findById
+server --> cfg : loadConfig()
+server --> app : createApp({config})
+
+note bottom of store
+  bcrypt.hash on add (rounds from config).
+  verifyPassword runs even when name is
+  missing — uniform timing avoids
+  username-enumeration via response time.
+end note
+
+note right of auth
+  Returns 401 with distinct reasons:
+   - missing header
+   - token expired / invalid
+   - user no longer exists
+end note
+@enduml

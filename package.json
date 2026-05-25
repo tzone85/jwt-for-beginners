@@ -1,29 +1,31 @@
 {
   "name": "jwt-for-beginners",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Express + JWT auth backend — ESM, bcrypt-hashed passwords, env-driven secrets.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "main": "src/server.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "lint": "eslint ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tzone85/jwt-for-beginners.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tzone85/jwt-for-beginners/issues"
-  },
-  "homepage": "https://github.com/tzone85/jwt-for-beginners#readme",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
-    "passport": "^0.4.0",
-    "passport-jwt": "^4.0.0"
-  }
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.18.0",
+    "globals": "^15.14.0",
+    "supertest": "^7.0.0",
+    "vitest": "^2.1.8"
+  },
+  "license": "MIT"
 }

@@ -1,0 +1,47 @@
+@startuml sequence_login
+title Sequence — POST /auth/login + GET /me
+
+skinparam shadowing false
+
+actor Client
+participant "auth router" as Auth
+participant "UserStore" as Store
+participant "JwtService" as Jwt
+participant "/me router" as Me
+participant "requireAuth" as RA
+
+Client -> Auth : POST /auth/login {name, password}
+Auth -> Auth : zod parse credentials
+alt invalid body
+  Auth --> Client : 400 validation failed
+else valid
+  Auth -> Store : verifyPassword(name, password)
+  alt wrong creds
+    Store --> Auth : false
+    Auth --> Client : 401 invalid credentials
+  else correct
+    Store --> Auth : true
+    Auth -> Store : findByName(name)
+    Auth -> Jwt : sign({id, name})
+    Jwt --> Auth : token
+    Auth --> Client : 200 {token}
+  end
+end
+
+== later ==
+
+Client -> Me : GET /me with Authorization: Bearer <token>
+Me -> RA : middleware
+RA -> Jwt : verify(token)
+alt invalid / expired
+  RA --> Client : 401
+else valid
+  RA -> Store : findById(payload.id)
+  alt missing
+    RA --> Client : 401 user no longer exists
+  else ok
+    RA --> Me : next(); req.user set
+    Me --> Client : 200 {user}
+  end
+end
+@enduml
