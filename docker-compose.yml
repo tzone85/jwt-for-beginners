@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1h}
+      PORT: 3000
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3000/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 5

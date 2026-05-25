@@ -1,0 +1,19 @@
+@startuml deployment
+title Deployment — single container
+
+skinparam shadowing false
+
+node "Docker host" {
+  node "api :3000" {
+    [node 20 + Express + bcrypt]
+  }
+}
+
+cloud "Clients" as clients
+clients --> [node 20 + Express + bcrypt] : HTTPS
+
+note bottom of [node 20 + Express + bcrypt]
+  Env vars: JWT_SECRET (required ≥16 chars),
+  JWT_EXPIRES_IN, BCRYPT_ROUNDS, PORT.
+end note
+@enduml
